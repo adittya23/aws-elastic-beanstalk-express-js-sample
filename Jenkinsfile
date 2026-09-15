@@ -30,7 +30,7 @@ pipeline {
             agent {
                 docker {
                     image 'node:16-bullseye'
-                    args  '-u 1000:1000'
+                    
                 }
             }
 
