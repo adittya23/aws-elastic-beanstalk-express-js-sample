@@ -127,6 +127,7 @@ pipeline {
                                    "-v trivy-db-cache:/root/.cache/ " +
                                    "aquasec/trivy:${env.TRIVY_VERSION} image " +
                                    "--no-progress --ignore-unfixed --scanners vuln"
+                                   "--pkg-types library"
 
                     sh "${trivy} --format table -o trivy-report.txt ${IMAGE}:${env.IMAGE_TAG} || true"
                     sh "${trivy} --format json  -o trivy-report.json ${IMAGE}:${env.IMAGE_TAG} || true"
