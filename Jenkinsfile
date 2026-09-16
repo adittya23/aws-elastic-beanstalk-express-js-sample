@@ -127,8 +127,8 @@ pipeline {
                                    "aquasec/trivy:${env.TRIVY_VERSION} image " +
                                    "--no-progress --ignore-unfixed --scanners vuln"
 
-                    sh "${trivy} --format table -o trivy-report.txt ${IMAGE}:${env.IMAGE_TAG} || true"
-                    sh "${trivy} --format json  -o trivy-report.json ${IMAGE}:${env.IMAGE_TAG} || true"
+                    sh "${trivy} --format table ${IMAGE}:${env.IMAGE_TAG} > trivy-report.txt 2>&1 || true"
+                    sh "${trivy} --format json  ${IMAGE}:${env.IMAGE_TAG} > trivy-report.json 2>&1 || true"
 
                     int rc = sh(script: "${trivy} --severity ${env.BLOCKING_SEVERITY} ${IMAGE}:${env.IMAGE_TAG}", returnStatus: true)
                     if (rc != 0) {
@@ -147,11 +147,7 @@ pipeline {
         stage('Publish to registry') {
             agent any
             when {
-                allOf {
-                    expression { params.PUSH_IMAGE }
-                    branch pattern: 'main|master|develop', comparator: 'REGEXP'
-                    expression { currentBuild.result != 'FAILURE' }
-                }
+                expression { params.PUSH_IMAGE }
             }
             steps {
                 script {
